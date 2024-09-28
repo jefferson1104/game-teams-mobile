@@ -4,7 +4,10 @@ import { useFonts, Roboto_400Regular, Roboto_700Bold } from '@expo-google-fonts/
 
 import { Groups } from '@screens/Groups';
 
+import { Loading } from '@components/Loading';
+
 import theme from './src/theme';
+
 
 export default function App() {
   // Hooks
@@ -16,7 +19,7 @@ export default function App() {
   // Renders
   return (
     <ThemeProvider theme={theme}>
-      { fontsLoaded ? <Groups /> : <ActivityIndicator />}
+      {fontsLoaded ? <Groups /> : <Loading />}
     </ThemeProvider>
   );
 }
