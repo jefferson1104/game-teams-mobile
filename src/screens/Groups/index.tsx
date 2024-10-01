@@ -4,12 +4,13 @@ import { FlatList } from "react-native";
 import { Header } from "@components/Header";
 import { Highlight } from "@components/Highlight";
 import { GroupCard } from "@components/GroupCard";
+import { ListEmpty } from "@components/ListEmpty";
 
 import { Container } from "./styles";
 
 export function Groups() {
   // States
-  const [groups, setGroups] = useState<string[]>(['Galera do CS2', 'Warzone Team']);
+  const [groups, setGroups] = useState<string[]>([]);
 
   // Renders
   return (
@@ -30,6 +31,12 @@ export function Groups() {
             onPress={() => {}}
           />
         )}
+        contentContainerStyle={groups.length === 0 && { flex: 1 }}
+        ListEmptyComponent={
+          <ListEmpty
+            message="How about registering the first team?"
+          />
+        }
       />
     </Container>
   );
