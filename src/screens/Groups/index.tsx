@@ -7,6 +7,7 @@ import { GroupCard } from "@components/GroupCard";
 import { ListEmpty } from "@components/ListEmpty";
 
 import { Container } from "./styles";
+import { Button } from "@components/Button";
 
 export function Groups() {
   // States
@@ -37,6 +38,10 @@ export function Groups() {
             message="How about registering the first team?"
           />
         }
+      />
+
+      <Button
+        title="Create Team"
       />
     </Container>
   );
