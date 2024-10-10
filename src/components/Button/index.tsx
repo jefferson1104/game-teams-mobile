@@ -8,7 +8,6 @@ interface IButtonProps extends TouchableOpacityProps {
 }
 
 export function Button({ title, type = 'PRIMARY', ...rest }: IButtonProps) {
-
   // Renders
   return (
     <Container

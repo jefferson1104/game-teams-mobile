@@ -7,7 +7,6 @@ interface IHeaderProps {
 }
 
 export function Header({ showBackButton = false }: IHeaderProps) {
-
   // Renders
   return (
     <Container>
