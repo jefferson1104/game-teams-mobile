@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import { Header } from "@components/Header";
@@ -8,8 +9,9 @@ import { Button } from "@components/Button";
 
 import { createGroup } from "@storage/group/createGroup";
 
-import { Container, Content, Icon } from "./styles";
+import { AppError } from "@utils/AppError";
 
+import { Container, Content, Icon } from "./styles";
 
 export function NewGroup() {
   // Hooks
@@ -21,10 +23,19 @@ export function NewGroup() {
   // Methods
   async function handleNew() {
     try {
+      if (group.trim().length === 0) {
+        return Alert.alert('New Group', 'Group name is required');
+      }
+
       await createGroup(group);
       navigation.navigate('players', { group });
     } catch (error) {
-      console.error('handleNew() error: ', error);
+      if (error instanceof AppError) {
+        Alert.alert('New Group', error.message);
+      } else {
+        Alert.alert('New Group', 'An error occurred while creating the group');
+        console.error('handleNew() error: ', error);
+      }
     }
   };
 
@@ -41,7 +52,7 @@ export function NewGroup() {
 
         <Input
           placeholder="Team name"
-          onChangeText={setGroup}
+          onChangeText={(text: string) => setGroup(text.trim())}
         />
 
         <Button
