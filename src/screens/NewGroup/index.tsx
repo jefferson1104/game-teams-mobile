@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 
 import { Header } from "@components/Header";
@@ -11,9 +12,12 @@ export function NewGroup() {
   // Hooks
   const navigation = useNavigation();
 
+  // States
+  const [group, setGroup] = useState('');
+
   // Methods
   function handleNew() {
-    navigation.navigate('players', { group: 'MegaTeam' });
+    navigation.navigate('players', { group });
   };
 
   // Renders
@@ -29,6 +33,7 @@ export function NewGroup() {
 
         <Input
           placeholder="Team name"
+          onChangeText={setGroup}
         />
 
         <Button
