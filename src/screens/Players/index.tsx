@@ -12,12 +12,14 @@ import { ListEmpty } from '@components/ListEmpty';
 import { PlayerCard } from '@components/PlayerCard';
 
 import { addPlayerByGroup } from '@storage/players/addPlayerByGroup';
+import { removePlayerByGroup } from '@storage/players/removePlayerByGroup';
 import { getPlayersByGroupAndTeam } from '@storage/players/getPlayersByGroupAndTeam';
 import { PlayerStorageDTO } from '@storage/players/PlayerStorageDTO';
 
 import { AppError } from '@utils/AppError';
 
 import { Container, Form, HeaderList, NumberOfPlayers } from './styles';
+
 
 interface RouteParams {
   group: string;
@@ -59,6 +61,20 @@ export function Players() {
       } else {
         Alert.alert('New Player', 'An error occurred while adding the player');
         console.error('handleAddPlayer() error: ', error);
+      }
+    }
+  };
+
+  async function handleRemovePlayer(playerName: string) {
+    try {
+      await removePlayerByGroup(playerName, group);
+      fetchPlayersByTeam();
+    } catch (error) {
+      if (error instanceof AppError) {
+        Alert.alert('Remove Player', error.message);
+      } else {
+        Alert.alert('Remove Player', 'An error occurred while removing the player');
+        console.error('handleRemovePlayer() error: ', error);
       }
     }
   };
@@ -110,7 +126,7 @@ export function Players() {
       </Form>
       <HeaderList>
         <FlatList
-          data={['Team A', 'Team B', 'Team C']}
+          data={['Team A', 'Team B']}
           horizontal
           keyExtractor={(item) => item}
           renderItem={({ item }) => (
@@ -132,7 +148,7 @@ export function Players() {
         renderItem={({ item }) => (
           <PlayerCard
             name={item.name}
-            onRemove={() => setPlayers(players.filter(player => player !== item))}
+            onRemove={() => handleRemovePlayer(item.name)}
           />
         )}
         ListEmptyComponent={
