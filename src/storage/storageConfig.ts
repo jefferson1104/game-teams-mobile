@@ -1,3 +1,4 @@
 const GROUP_COLLECTION = 'groups';
+const PLAYER_COLLECTION = 'players';
 
-export { GROUP_COLLECTION };
+export { GROUP_COLLECTION, PLAYER_COLLECTION};
