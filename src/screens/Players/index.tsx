@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { Alert, FlatList } from 'react-native';
-import { useRoute } from '@react-navigation/native';
+import { useFocusEffect, useRoute } from '@react-navigation/native';
 
 import { Button } from '@components/Button';
 import { ButtonIcon } from '@components/ButtonIcon';
@@ -12,12 +12,12 @@ import { ListEmpty } from '@components/ListEmpty';
 import { PlayerCard } from '@components/PlayerCard';
 
 import { addPlayerByGroup } from '@storage/players/addPlayerByGroup';
-import { getPlayersByGroup } from '@storage/players/getPlayersByGroup';
+import { getPlayersByGroupAndTeam } from '@storage/players/getPlayersByGroupAndTeam';
+import { PlayerStorageDTO } from '@storage/players/PlayerStorageDTO';
 
 import { AppError } from '@utils/AppError';
 
 import { Container, Form, HeaderList, NumberOfPlayers } from './styles';
-
 
 interface RouteParams {
   group: string;
@@ -29,7 +29,7 @@ export function Players() {
 
   // States
   const [team, setTeam] = useState('Team A');
-  const [players, setPlayers] = useState<string[]>([]);
+  const [players, setPlayers] = useState<PlayerStorageDTO[]>([]);
   const [newPlayerName, setNewPlayerName] = useState('');
 
   // Constants
@@ -48,10 +48,7 @@ export function Players() {
 
     try {
       await addPlayerByGroup(newPlayer, group);
-
-      const players = await getPlayersByGroup(group);
-      console.log('PLAYERS =>', players)
-
+      fetchPlayersByTeam();
     } catch (error) {
       if (error instanceof AppError) {
         Alert.alert('New Player', error.message);
@@ -61,6 +58,27 @@ export function Players() {
       }
     }
   };
+
+  async function fetchPlayersByTeam() {
+    try {
+      const playersByTeam = await getPlayersByGroupAndTeam(group, team);
+
+      setPlayers(playersByTeam);
+
+    } catch (error) {
+      if (error instanceof AppError) {
+        Alert.alert('Players', error.message);
+      } else {
+        Alert.alert('Players', 'An error occurred while fetching the players');
+        console.error('fetchPlayersByTeam() error: ', error);
+      }
+    }
+  };
+
+  // LifeCycles
+  useFocusEffect(useCallback(() => {
+    fetchPlayersByTeam();
+  }, [team]));
 
   // Renders
   return (
@@ -101,11 +119,11 @@ export function Players() {
       </HeaderList>
       <FlatList
         data={players}
-        keyExtractor={(item) => item}
+        keyExtractor={(item) => item.name}
         showsVerticalScrollIndicator={false}
         renderItem={({ item }) => (
           <PlayerCard
-            name={item}
+            name={item.name}
             onRemove={() => setPlayers(players.filter(player => player !== item))}
           />
         )}
