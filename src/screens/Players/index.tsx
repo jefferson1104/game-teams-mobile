@@ -1,6 +1,6 @@
 import { useCallback, useState, useRef } from 'react';
 import { Alert, FlatList, TextInput, Keyboard } from 'react-native';
-import { useFocusEffect, useRoute } from '@react-navigation/native';
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 
 import { Button } from '@components/Button';
 import { ButtonIcon } from '@components/ButtonIcon';
@@ -14,11 +14,13 @@ import { PlayerCard } from '@components/PlayerCard';
 import { addPlayerByGroup } from '@storage/players/addPlayerByGroup';
 import { removePlayerByGroup } from '@storage/players/removePlayerByGroup';
 import { getPlayersByGroupAndTeam } from '@storage/players/getPlayersByGroupAndTeam';
+import { removeGroupByName } from '@storage/group/removeGroupByName';
 import { PlayerStorageDTO } from '@storage/players/PlayerStorageDTO';
 
 import { AppError } from '@utils/AppError';
 
 import { Container, Form, HeaderList, NumberOfPlayers } from './styles';
+
 
 
 interface RouteParams {
@@ -28,6 +30,7 @@ interface RouteParams {
 export function Players() {
   // Hooks
   const route = useRoute();
+  const navigation = useNavigation();
   const inputRef = useRef<TextInput>(null);
 
   // States
@@ -75,6 +78,33 @@ export function Players() {
       } else {
         Alert.alert('Remove Player', 'An error occurred while removing the player');
         console.error('handleRemovePlayer() error: ', error);
+      }
+    }
+  };
+
+  async function handleRemoveGroup() {
+    Alert.alert('Remove Team', 'Are you sure you want to remove this group?', [
+      {
+        text: 'Cancel',
+        style: 'cancel'
+      },
+      {
+        text: 'Yes',
+        onPress: async () => removeGroup()
+      }
+    ]);
+  };
+
+  async function removeGroup() {
+    try {
+      await removeGroupByName(group);
+      navigation.navigate('groups');
+    } catch (error) {
+      if (error instanceof AppError) {
+        Alert.alert('Remove Group', error.message);
+      } else {
+        Alert.alert('Remove Group', 'An error occurred while removing the group');
+        console.error('removeGroup() error: ', error);
       }
     }
   };
@@ -164,6 +194,7 @@ export function Players() {
       <Button
         title="Remove Team"
         type="SECONDARY"
+        onPress={handleRemoveGroup}
       />
     </Container>
   );
