@@ -1,5 +1,5 @@
-import { useCallback, useState } from 'react';
-import { Alert, FlatList } from 'react-native';
+import { useCallback, useState, useRef } from 'react';
+import { Alert, FlatList, TextInput, Keyboard } from 'react-native';
 import { useFocusEffect, useRoute } from '@react-navigation/native';
 
 import { Button } from '@components/Button';
@@ -26,6 +26,7 @@ interface RouteParams {
 export function Players() {
   // Hooks
   const route = useRoute();
+  const inputRef = useRef<TextInput>(null);
 
   // States
   const [team, setTeam] = useState('Team A');
@@ -48,6 +49,9 @@ export function Players() {
 
     try {
       await addPlayerByGroup(newPlayer, group);
+      inputRef.current?.blur();
+      Keyboard.dismiss();
+      setNewPlayerName('');
       fetchPlayersByTeam();
     } catch (error) {
       if (error instanceof AppError) {
@@ -90,8 +94,12 @@ export function Players() {
       />
       <Form>
         <Input
+          inputRef={inputRef}
           placeholder='Player name'
           autoCorrect={false}
+          value={newPlayerName}
+          onSubmitEditing={handleAddPlayer}
+          returnKeyType='done'
           onChangeText={(text) => setNewPlayerName(text.trim())}
         />
 

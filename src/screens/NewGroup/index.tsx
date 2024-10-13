@@ -52,6 +52,7 @@ export function NewGroup() {
 
         <Input
           placeholder="Team name"
+          autoCorrect={false}
           onChangeText={(text: string) => setGroup(text.trim())}
         />
 
